@@ -1,0 +1,41 @@
+#macro( DWZPagination $totalCount $numPerPage $currentPage $isNavTab)
+<!-- $totalCount $numPerPage $currentPage -->
+    #if(!$totalCount)
+        #set($totalCount = 0)
+    #end
+    #if(!$numPerPage)
+        #set($numPerPage = 25)
+    #end
+    #if($currentPage <= 0)
+        #set($currentPage = 1)
+    #end
+<div class="panelBar">
+    <div class="pages">
+        <span>显示</span>
+        <select name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+            <option value="25" #if($numPerPage == 25) selected="selected" #end>25</option>
+            <option value="50" #if($numPerPage == 50) selected="selected"  #end>50</option>
+            <option value="100" #if($numPerPage == 100) selected="selected"  #end>100</option>
+            <option value="200" #if($numPerPage == 200) selected="selected"  #end>200</option>
+        </select>
+        <span>条，共${totalCount}条</span>
+    </div>
+    <div class="pagination" #if($isNavTab)targetType="navTab" #else targetType="dialog" #end totalCount="${totalCount}" numPerPage="$numPerPage" pageNumShown="10" currentPage="$currentPage"></div>
+</div>
+#end
+
+#macro( DateFormat $date $format)
+    #if(!$date)
+        #break
+    #end
+    #if(!$format)
+        #set ($format = "yyyy-MM-dd HH:mm:ss")
+    #end
+    $dateTool.format($format, $date)
+#end
+
+#macro( DateFormat $date)
+    #if($date)
+        $dateTool.format("yyyy-MM-dd HH:mm:ss", $date)
+    #end
+#end

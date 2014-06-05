@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	
+	<context:property-placeholder location="classpath:server.properties"/>
+
+	<!-- view -->
+	<bean id="velocityViewCache" class="com.eyeieye.melody.util.cache.local.GuavaCache">
+		<constructor-arg name="expireAfterWriteInSecond" value="3600"/>
+		<constructor-arg name="maxSize" value="10000"/>
+	</bean>
+    <bean id="velocityConfigurer"
+          class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath" value="WEB-INF/admin/" />
+        <property name="velocityProperties">
+            <map>
+                <entry key="input.encoding" value="UTF-8"></entry>
+                <entry key="output.encoding" value="UTF-8"></entry>
+                <!-- cache directive 相关配置 -->
+                <entry key="userdirective" value="com.eyeieye.melody.web.velocity.directive.CacheDirective"></entry>
+                <!-- direcitive.cache.provider　配置cache的提供者 -->
+                <entry key="direcitive.cache.provider" value-ref="velocityViewCache"></entry>
+                <!-- direcitive.cache.dev.mode 控制是否打开cache,如果是true,则关闭 -->
+                <entry key="direcitive.cache.dev.mode" value="${system.devMode}"></entry>
+                <entry key="velocimacro.library" value="macro.vm"/>
+                <entry key="velocimacro.library.autoreload" value="true" />
+			</map>
+		</property>
+		<property name="configLocation" value="classpath:velocity.properties"></property>
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+		<property name="order" value="10" />
+		<property name="suffix" value=".vm" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="dateToolAttribute" value="dateTool" />
+		<property name="numberToolAttribute" value="numberTool" />
+		<property name="toolboxConfigLocation" value="WEB-INF/velocity/vm-toolbox.xml" />
+		<property name="contentType" value="${web.contentType}"></property>
+		<property name="exposeRequestAttributes" value="true"></property>
+	</bean>
+
+	<!-- vm如果不存在，还能使用jsp页面。  -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="100" />
+		<property name="prefix" value="/WEB-INF/views/screen/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- interceptors -->
+	<bean id="brokersInterceptor"
+		class="com.eyeieye.melody.web.url.URLBrokerLauncherInterceptor">
+		<property name="brokers">
+			<map>
+				<entry key="appServer" value-ref="appServerBroker"></entry>
+				<entry key="sslAppServer" value-ref="sslAppServerBroker"></entry>
+				<entry key="imageServer" value-ref="imageServerBroker"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- adapters -->
+	<!--   bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" / -->
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<bean
+		class="com.eyeieye.melody.web.adapter.ExtendableAnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+				<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+		<property name="customArgumentResolvers">
+			<list>
+				<!-- 只要在method声明Cookyjar对象,则自动注入 -->
+				<bean class="com.eyeieye.melody.web.cookyjar.CookyjarArgumentResolver"/>
+				<!-- 只要在method声明UserAgent对象,则自动注入 -->
+				<bean class="com.glp.admin.security.AdminAgentArgumentResolver" />
+			</list>
+		</property>
+		<property name="methodInvokeInterceptors">
+			<list>
+				<bean class="com.glp.admin.security.AdminAuthorityHandlerInterceptor"></bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- url mapping -->
+	<bean id="defaultHandlerMapping"
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+		<property name="order" value="0" />
+		<property name="interceptors">
+			<list>
+				<ref bean="brokersInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="100" />
+		<property name="urlMap">
+			<map>
+			</map>
+		</property>
+	</bean>
+
+	<context:component-scan base-package="com.glp.admin.controllers" />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="200" />
+		<property name="interceptors">
+			<list>
+				<ref bean="brokersInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="lastHandlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="999" />
+		<property name="defaultHandler">
+			<bean
+				class="org.springframework.web.servlet.mvc.UrlFilenameViewController"></bean>
+		</property>
+		<property name="interceptors">
+			<list>
+				<ref bean="brokersInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 文件上传解析-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="${web.encoding}" />
+		<!-- 10M -->
+		<property name="maxUploadSize" value="10485760" />
+	</bean>
+	
+	<!-- exception resolver -->
+	<bean class="com.glp.resolver.WebExceptionResolver">
+		<property name="webEncoding" value="UTF-8"></property>
+		<property name="errorPage" value="/error"></property>
+		<property name="loginPath" value="/admin/signin.htm"></property>
+		<property name="deniedPage" value="/user/accessDenied"></property>
+		<property name="loginReturnParameterName" value="url"></property>
+        <property name="deniedException" value="com.glp.admin.security.AdminAccessDeniedException"/>
+        <property name="dependence" value="com.glp.admin.security.AdminAgent"/>
+	</bean>
+	
+	
+</beans>

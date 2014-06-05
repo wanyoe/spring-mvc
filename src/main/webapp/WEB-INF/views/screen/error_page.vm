@@ -1,0 +1,57 @@
+#set( $layout = "layout/default.vm" )
+
+    <div class="container">
+        <div class="uc-main-container">
+            <h3 class="hd">Error Tip.</h3>
+            <div class="bd">
+                <div class="page-tip">
+					#if($errorMsg)
+						$!{errorMsg}( <span id="sec">10</span> seconds after the return. )
+					#end
+                </div>
+                <div class="btn-group-tac">
+                    <button id="btnReturn" type="button" class="btn btn-lg btn-default">Go</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(function(){
+        var times = 10,
+            goBack = function(){
+				window.location.href = "${appServer}/user/center.htm";
+				/**
+				var url = window.location.href;
+				if(url.indexOf("/3rdbind/") != -1){
+					window.location.href = "${appServer}/user/3rdbind/list.htm";
+				}else if(url.indexOf("/activity/") != -1){
+					window.location.href = "${appServer}/business/activity/list.htm";
+				}else if(url.indexOf("/product/") != -1){
+					window.location.href = "${appServer}/business/product/list.htm";
+				}else if(url.indexOf("/refer/") != -1){
+					window.location.href = "${appServer}/business/refer/list.htm";
+				}else if(url.indexOf("/reference/") != -1){
+					window.location.href = "${appServer}/business/reference/list.htm";
+				}else if(url.indexOf("/chain/") != -1){
+					window.location.href = "${appServer}/business/chain/list.htm";
+				}else if(url.indexOf("/cert/") != -1){
+					window.location.href = "${appServer}/business/cert/list.htm";
+				}else{
+					window.location.href = "${appServer}/user/center.htm";
+				}**/
+            };
+    
+        setInterval(function(){
+            if(times === 1) {
+                goBack();
+            }
+    
+            times = times - 1;
+            $("#sec").text(times);
+        },1000);
+    
+        $("#btnReturn").click(function() {
+            goBack();
+        });
+    })
+</script>

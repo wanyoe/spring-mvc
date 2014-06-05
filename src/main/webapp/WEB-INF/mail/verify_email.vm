@@ -1,0 +1,49 @@
+#set( $layout = "" )
+<table bgcolor="#f1f1f1" width="100%" height="100%" align="center" style="border-collapse:collapse" border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr align="center">
+            <td valign="top">
+                <table bgcolor="#f1f1f1" height="60" width="600" style="border-collapse:collapse" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr valign="middle" height="40">
+                            <td width="10"></td>
+                            <td valign="middle">
+                                <img src="${appServer}/images/logo.png" border="0" alt="Google Accounts" style="display:block" height="45">
+                            </td>
+                            <td width="10"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="text-align:left; border:1px solid #ccc;">
+                    <tbody>
+                        <tr>
+                            <td height="15" style="border:none"></td>
+                        </tr>
+                        <tr>
+                            <td width="15" style="border:none"></td>
+                            <td width="568" valign="top" style="font-size:83%;border:none;font-size:13px;font-family:arial,sans-serif;color:#222222;line-height:18px">Dear $!{user.email},
+                                <br>
+                                <br>Your account has been already created in Goldenlink Plus. In order to activate your account, please click the following link:
+                                <br><a href="$!{appServer}/user/active.htm?token=$!token&key=$!key" target="_blank">$!{appServer}/user/active.htm?token=$!token&key=$!key</a>
+                                <br>Your account could not be used until you click the link above.
+                                <br>
+                                <br>If you're unable to click the link, copy and paste it into your web browser. If you have trouble doing that, please forward this email to no-reply@goldenlinkplus.com by marking "trouble in activating account". Thanks!
+                                <br>
+                                <br>Best regards
+                                <br>
+                                <br>Team Goldelink+
+                            </td>
+                            <td width="15" style="border:none"></td>
+                        </tr>
+                        <tr>
+                            <td height="15" style="border:none"></td>
+                        </tr>
+                        <tr>
+                            <td height="15" style="border:none"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>

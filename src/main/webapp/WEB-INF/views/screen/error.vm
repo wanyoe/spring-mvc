@@ -1,0 +1,11 @@
+<h1>ERROR: 没有处理的错误</h1>
+
+<!-- 
+
+ 
+    Exception:  ${error.message}
+    	#foreach( $trace in ${error.stackTrace})
+    		$trace
+    	#end
+	
+ -->

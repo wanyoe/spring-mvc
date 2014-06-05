@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<title>Share a link</title>
+	</head>
+
+	<body>
+		<table width="600px" cellspacing="0" cellpadding="0">
+
+			<tr>
+				<td>Hello, Your friend has shared a link with you:</td>
+			</tr>
+			<tr>
+				<td>
+				<br>
+				<br>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$!message
+				</td>
+			</tr>
+			<tr>
+				<td>
+    				Please click the link below for detail: <a href="$!{link}" target="_blank">$!{link}</a>
+				</td>
+			</tr>
+			<tr>
+				<td>Team Goldelink+ </td>
+			</tr>
+
+		</table>
+
+	</body>
+</html>
+

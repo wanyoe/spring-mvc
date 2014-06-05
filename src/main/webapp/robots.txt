@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+Sitemap: <http://www.goldenlinkplus.com/sitemap.xml>
